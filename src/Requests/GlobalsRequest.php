@@ -4,6 +4,7 @@ namespace Packaged\Http\Requests;
 use Packaged\Http\Helpers\ArrayHelper;
 use Packaged\Http\ServerRequest;
 use Packaged\Http\Streams\PhpInputStream;
+use Packaged\Http\UploadedFile;
 use Packaged\Http\Uris\GlobalsUri;
 
 class GlobalsRequest extends ServerRequest
@@ -30,6 +31,20 @@ class GlobalsRequest extends ServerRequest
     else
     {
       $this->parsedBody = $this->getBody();
+    }
+
+    if(!empty($_FILES))
+    {
+      foreach($_FILES as $file => $data)
+      {
+        $this->files[$file] = new UploadedFile(
+          $data['tmp_name'],
+          $data['size'],
+          $data['error'],
+          $data['name'],
+          $data['type']
+        );
+      }
     }
 
     $this->uri = new GlobalsUri();
