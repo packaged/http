@@ -105,10 +105,16 @@ class HttpMessage implements MessageInterface
     return $this->body;
   }
 
+  protected function setBody(StreamInterface $body)
+  {
+    $this->body = $body;
+    return $this;
+  }
+
   public function withBody(StreamInterface $body)
   {
     $message = clone $this;
-    $message->body = $body;
+    $message->setBody($body);
     return $message;
   }
 

@@ -16,8 +16,8 @@ class Stream implements StreamInterface
   const MODE_WRITE = 'c';
   const MODE_READ_WRITE = 'c+';
 
-  private $resource;
-  private $stream;
+  protected $resource;
+  protected $stream;
 
   public function __toString()
   {
@@ -90,7 +90,7 @@ class Stream implements StreamInterface
 
   public function tell()
   {
-    $this->_checkResource();
+    $this->checkResource();
 
     $position = ftell($this->resource);
 
@@ -123,7 +123,7 @@ class Stream implements StreamInterface
 
   public function seek($offset, $whence = SEEK_SET)
   {
-    $this->_checkResource();
+    $this->checkResource();
 
     if(!$this->isSeekable())
     {
@@ -147,7 +147,7 @@ class Stream implements StreamInterface
 
   public function isWritable()
   {
-    $this->_checkResource();
+    $this->checkResource();
 
     $meta = stream_get_meta_data($this->resource);
     return is_writable($meta['uri']);
@@ -155,7 +155,7 @@ class Stream implements StreamInterface
 
   public function write($string)
   {
-    $this->_checkResource();
+    $this->checkResource();
 
     $result = fwrite($this->resource, $string);
 
@@ -169,7 +169,7 @@ class Stream implements StreamInterface
 
   public function isReadable()
   {
-    $this->_checkResource();
+    $this->checkResource();
 
     $meta = stream_get_meta_data($this->resource);
     $mode = $meta['mode'];
@@ -179,7 +179,7 @@ class Stream implements StreamInterface
 
   public function read($length)
   {
-    $this->_checkResource();
+    $this->checkResource();
 
     if(!$this->isReadable())
     {
@@ -225,7 +225,7 @@ class Stream implements StreamInterface
     return array_key_exists($key, $metadata) ? $metadata[$key] : null;
   }
 
-  private function _checkResource()
+  protected function checkResource()
   {
     if(!is_resource($this->resource))
     {
