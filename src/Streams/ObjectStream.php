@@ -27,11 +27,7 @@ class ObjectStream extends StringStream
     }
 
     $this->stream = $stream;
-
-    if(strpos('+', $mode) === false)
-    {
-      $this->writable = false;
-    }
+    $this->writable = stristr('+', $mode);
 
     return $this;
   }

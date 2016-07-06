@@ -9,6 +9,7 @@ class StringStream extends Stream
 
   public function __construct($stream = '', $mode = self::MODE_READ_WRITE)
   {
+    $this->writable = stristr('+', $mode);
     $this->attach($stream, $mode);
   }
 
@@ -27,11 +28,7 @@ class StringStream extends Stream
     }
 
     $this->resource = $this->stream = $stream;
-
-    if(strpos('+', $mode) === false)
-    {
-      $this->writable = false;
-    }
+    $this->writable = stristr('+', $mode);
 
     return $this;
   }
@@ -168,19 +165,5 @@ class StringStream extends Stream
     }
 
     return array_key_exists($key, $metadata) ? $metadata[$key] : null;
-  }
-
-  public function setWritable($writable)
-  {
-    $this->writable = (boolean)$writable;
-
-    return $this;
-  }
-
-  public function setSeekable($seekable)
-  {
-    $this->seekable = (boolean)$seekable;
-
-    return $this;
   }
 }
