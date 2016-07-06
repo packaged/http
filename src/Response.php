@@ -12,7 +12,7 @@ class Response extends HttpMessage implements ResponseInterface
   protected $status = 200;
   protected $reason = 'OK';
 
-  public function __construct($body, $code = 200, $reason = null)
+  public function __construct($body = '', $code = 200, $reason = null)
   {
     if($body instanceof StreamInterface)
     {
@@ -58,6 +58,60 @@ class Response extends HttpMessage implements ResponseInterface
   public function getReasonPhrase()
   {
     return $this->reason;
+  }
+
+  public function sendHeaders()
+  {
+    //Do not sent headers if already sent
+    if(headers_sent())
+    {
+      return $this;
+    }
+
+    //Set Document Date
+    if(!$this->hasHeader('Date'))
+    {
+      $date = \DateTime::createFromFormat('U', time());
+      $date->setTimezone(new \DateTimeZone('UTC'));
+      $this->addHeader('Date', $date->format('D, d M Y H:i:s') . ' GMT');
+    }
+
+    //Send common headers
+    foreach($this->getHeaders() as $name => $values)
+    {
+      foreach($values as $value)
+      {
+        header($name . ': ' . $value, false, $this->getStatusCode());
+      }
+    }
+
+    // Return Status
+    header(
+      sprintf(
+        'HTTP/%s %s %s',
+        $this->getProtocolVersion(),
+        $this->getStatusCode(),
+        $this->getReasonPhrase()
+      ),
+      true,
+      $this->getStatusCode()
+    );
+
+    return $this;
+  }
+
+  public function sendContent()
+  {
+    echo $this->getBody()->getContents();
+    return $this;
+  }
+
+  public function send()
+  {
+    $this->sendHeaders();
+    $this->sendContent();
+
+    return $this;
   }
 
 }
