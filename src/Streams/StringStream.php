@@ -27,7 +27,8 @@ class StringStream extends Stream
     }
 
     $this->resource = $this->stream = $stream;
-    $this->writable = stristr($mode, '+');
+    $this->writable = stristr($mode, '+') !== false;
+    $this->rewind();
 
     return $this;
   }
