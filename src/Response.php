@@ -2,6 +2,7 @@
 namespace Packaged\Http;
 
 use Packaged\Http\Helpers\ResponseHelper;
+use Packaged\Http\Interfaces\ResponseStatus;
 use Packaged\Http\Streams\ObjectStream;
 use Packaged\Http\Streams\StringStream;
 use Psr\Http\Message\ResponseInterface;
@@ -9,10 +10,12 @@ use Psr\Http\Message\StreamInterface;
 
 class Response extends HttpMessage implements ResponseInterface
 {
-  protected $status = 200;
+  protected $status = ResponseStatus::HTTP_OK;
   protected $reason = 'OK';
 
-  public function __construct($body = '', $code = 200, $reason = null)
+  public function __construct(
+    $body = '', $code = ResponseStatus::HTTP_OK, $reason = null
+  )
   {
     if($body instanceof StreamInterface)
     {
@@ -21,6 +24,7 @@ class Response extends HttpMessage implements ResponseInterface
     else if(is_object($body))
     {
       $this->setBody(new ObjectStream($body));
+      $this->addHeader('Content-type', 'application/json');
     }
     else if(is_string($body))
     {

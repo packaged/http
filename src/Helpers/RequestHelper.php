@@ -1,20 +1,22 @@
 <?php
 namespace Packaged\Http\Helpers;
 
+use Packaged\Http\Interfaces\RequestMethod;
+
 class RequestHelper
 {
   public static function supportedMethods()
   {
     return [
-      'CONNECT' => 'CONNECT',
-      'DELETE'  => 'DELETE',
-      'GET'     => 'GET',
-      'HEAD'    => 'HEAD',
-      'OPTIONS' => 'OPTIONS',
-      'PATCH'   => 'PATCH',
-      'POST'    => 'POST',
-      'PUT'     => 'PUT',
-      'TRACE'   => 'TRACE',
+      RequestMethod::CONNECT => RequestMethod::CONNECT,
+      RequestMethod::DELETE  => RequestMethod::DELETE,
+      RequestMethod::GET     => RequestMethod::GET,
+      RequestMethod::HEAD    => RequestMethod::HEAD,
+      RequestMethod::OPTIONS => RequestMethod::OPTIONS,
+      RequestMethod::PATCH   => RequestMethod::PATCH,
+      RequestMethod::POST    => RequestMethod::POST,
+      RequestMethod::PUT     => RequestMethod::PUT,
+      RequestMethod::TRACE   => RequestMethod::TRACE,
     ];
   }
 

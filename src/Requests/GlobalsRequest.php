@@ -2,6 +2,7 @@
 namespace Packaged\Http\Requests;
 
 use Packaged\Http\Helpers\ArrayHelper;
+use Packaged\Http\Interfaces\RequestMethod;
 use Packaged\Http\ServerRequest;
 use Packaged\Http\Streams\PhpInputStream;
 use Packaged\Http\UploadedFile;
@@ -12,7 +13,11 @@ class GlobalsRequest extends ServerRequest
   public function __construct()
   {
     $this->body = new PhpInputStream();
-    $this->method = ArrayHelper::value($_SERVER, 'REQUEST_METHOD', 'GET');
+    $this->method = ArrayHelper::value(
+      $_SERVER,
+      'REQUEST_METHOD',
+      RequestMethod::GET
+    );
     $protocol = ArrayHelper::value($_SERVER, 'SERVER_PROTOCOL');
     $this->protocol = stristr($protocol, '1.1') ? '1.1' : '1.0';
 
