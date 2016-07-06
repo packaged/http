@@ -60,6 +60,7 @@ class ObjectStream extends StringStream
         $this->write(var_export($this->stream, true));
         break;
     }
+    $this->rewind();
     return $this->resource;
   }
 }
