@@ -9,7 +9,6 @@ class StringStream extends Stream
 
   public function __construct($stream = '', $mode = self::MODE_READ_WRITE)
   {
-    $this->writable = stristr('+', $mode);
     $this->attach($stream, $mode);
   }
 
@@ -28,7 +27,7 @@ class StringStream extends Stream
     }
 
     $this->resource = $this->stream = $stream;
-    $this->writable = stristr('+', $mode);
+    $this->writable = stristr($mode, '+');
 
     return $this;
   }
