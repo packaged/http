@@ -10,11 +10,11 @@ use Psr\Http\Message\StreamInterface;
 
 class Response extends HttpMessage implements ResponseInterface
 {
-  protected $status = ResponseStatus::HTTP_OK;
+  protected $status = ResponseStatus::OK;
   protected $reason = 'OK';
 
   public function __construct(
-    $body = '', $code = ResponseStatus::HTTP_OK, $reason = null
+    $body = '', $code = ResponseStatus::OK, $reason = null
   )
   {
     if($body instanceof StreamInterface)
