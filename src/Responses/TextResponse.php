@@ -5,9 +5,9 @@ use Packaged\Http\Response;
 
 class TextResponse extends Response
 {
-  public static function i($text)
+  public static function create($text = '', $status = 200, $headers = [])
   {
-    $resp = parent::create($text, 200, []);
+    $resp = parent::create($text, $status, $headers);
     $resp->headers->set("Content-Type", "text/plain");
     return $resp;
   }

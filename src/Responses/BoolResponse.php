@@ -5,8 +5,8 @@ use Packaged\Http\Response;
 
 class BoolResponse extends Response
 {
-  public static function i($bool)
+  public static function create($bool = true, $status = 200, $headers = [])
   {
-    return parent::create($bool ? 'true' : 'false', 200, []);
+    return parent::create($bool ? 'true' : 'false', $status, $headers);
   }
 }
