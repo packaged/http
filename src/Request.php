@@ -187,7 +187,7 @@ class Request extends \Symfony\Component\HttpFoundation\Request
    *
    * @param null|int $depth depth of /
    *
-   * @return null
+   * @return string
    */
   public function path($depth = null)
   {
