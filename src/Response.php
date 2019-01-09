@@ -4,7 +4,7 @@ namespace Packaged\Http;
 class Response extends \Symfony\Component\HttpFoundation\Response
 {
   protected $_callTime;
-  protected $_sendDebugHeaders = true;
+  protected $_sendDebugHeaders;
 
   /**
    * @return string
@@ -67,7 +67,7 @@ class Response extends \Symfony\Component\HttpFoundation\Response
    */
   public function setDebugHeaders()
   {
-    if($this->_sendDebugHeaders)
+    if($this->_sendDebugHeaders === true)
     {
       //Add the exec time as a header if PHP_START has been defined by the project
       if(defined('PHP_START'))
