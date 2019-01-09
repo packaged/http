@@ -48,16 +48,16 @@ class Response extends \Symfony\Component\HttpFoundation\Response
   protected $_originalSource;
 
   /**
-   * Add Debug Headers before sending the response
+   * Add Debug Headers before sending
    *
    * @inheritdoc
    *
    * @return \Symfony\Component\HttpFoundation\Response
    */
-  public function send()
+  public function sendHeaders()
   {
     $this->setDebugHeaders();
-    return parent::send();
+    return parent::sendHeaders();
   }
 
   /**
