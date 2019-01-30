@@ -11,7 +11,7 @@
   "require": {
     "php": ">=7.1",
     "ext-json": "*",
-    "packaged/helpers": "~1.9",
+    "packaged/helpers": "^1.9||^2.0",
     "symfony/http-foundation": "~4.2"
   },
   "require-dev": {
