@@ -25,9 +25,7 @@ class RequestTest extends TestCase
   /**
    * @dataProvider httpHostsProvider
    */
-  public function testDomainParts(
-    $subDomain = null, $domain = null, $tld = null
-  )
+  public function testDomainParts($subDomain = null, $domain = null, $tld = null)
   {
     $request = Request::createFromGlobals();
     $host = trim(implode('.', func_get_args()), '.');
@@ -44,30 +42,30 @@ class RequestTest extends TestCase
     return [
       [],
       [null, 'localhost'],
-      ["www", "cubex", "local"],
-      ["www", "cubex", "local"],
-      ["www", "cubex", "co.uk"],
-      ["beta.www", "cubex", "io"],
-      ["beta.www", "cubex", "co.uk"],
+      ["www", "packaged", "local"],
+      ["www", "packaged", "local"],
+      ["www", "packaged", "co.uk"],
+      ["beta.www", "packaged", "io"],
+      ["beta.www", "packaged", "co.uk"],
     ];
   }
 
   public function testUrlSprintf()
   {
     $request = Request::createFromGlobals();
-    $request->headers->set('HOST', 'www.cubex.local:81');
+    $request->headers->set('HOST', 'www.packaged.local:81');
     $request->server->set('REQUEST_URI', '/path');
 
     $this->assertEquals("81", $request->urlSprintf("%r"));
     $this->assertEquals(":81", $request->urlSprintf("%o"));
     $this->assertEquals("/path", $request->urlSprintf("%i"));
     $this->assertEquals("http://", $request->urlSprintf("%p"));
-    $this->assertEquals("www.cubex.local:81", $request->urlSprintf("%h"));
-    $this->assertEquals("cubex", $request->urlSprintf("%d"));
+    $this->assertEquals("www.packaged.local:81", $request->urlSprintf("%h"));
+    $this->assertEquals("packaged", $request->urlSprintf("%d"));
     $this->assertEquals("www", $request->urlSprintf("%s"));
     $this->assertEquals("local", $request->urlSprintf("%t"));
     $this->assertEquals(
-      "http://www.cubex.local",
+      "http://www.packaged.local",
       $request->urlSprintf("%p%s.%d.%t")
     );
   }
@@ -75,11 +73,11 @@ class RequestTest extends TestCase
   public function testStandardPort()
   {
     $request = Request::createFromGlobals();
-    $request->headers->set('HOST', 'www.cubex.local:81');
+    $request->headers->set('HOST', 'www.packaged.local:81');
     $request->server->set('REQUEST_URI', '/path');
     $this->assertFalse($request->isStandardPort());
 
-    $request->headers->set('HOST', 'www.cubex.local:80');
+    $request->headers->set('HOST', 'www.packaged.local:80');
     $request->server->set('REQUEST_URI', '/path');
     $this->assertTrue($request->isStandardPort());
   }
@@ -88,13 +86,13 @@ class RequestTest extends TestCase
   {
     $request = Request::createFromGlobals();
 
-    $request->headers->set('HOST', 'www.cubex.local');
-    $this->assertTrue($request->matchDomain("cubex", null, null));
-    $this->assertTrue($request->matchDomain("cubex", "local", null));
-    $this->assertTrue($request->matchDomain("cubex", "local", "www"));
-    $this->assertFalse($request->matchDomain("packaged", null, null));
-    $this->assertFalse($request->matchDomain("cubex", "dev", null));
-    $this->assertFalse($request->matchDomain("cubex", "local", "wibble"));
+    $request->headers->set('HOST', 'www.packaged.local');
+    $this->assertTrue($request->matchDomain("packaged", null, null));
+    $this->assertTrue($request->matchDomain("packaged", "local", null));
+    $this->assertTrue($request->matchDomain("packaged", "local", "www"));
+    $this->assertFalse($request->matchDomain("scramble", null, null));
+    $this->assertFalse($request->matchDomain("packaged", "dev", null));
+    $this->assertFalse($request->matchDomain("packaged", "local", "wibble"));
   }
 
   public function testDefinedTlds()
@@ -102,10 +100,10 @@ class RequestTest extends TestCase
     $request = Request::createFromGlobals();
     $this->assertEmpty($request->getDefinedTlds());
     $request->defineTlds(['replace']);
-    $request->defineTlds(['dev', 'cubex'], false);
-    $this->assertEquals(['dev', 'cubex'], $request->getDefinedTlds());
+    $request->defineTlds(['dev', 'packaged'], false);
+    $this->assertEquals(['dev', 'packaged'], $request->getDefinedTlds());
     $request->defineTlds(['devx'], true);
-    $this->assertEquals(['dev', 'cubex', 'devx'], $request->getDefinedTlds());
+    $this->assertEquals(['dev', 'packaged', 'devx'], $request->getDefinedTlds());
   }
 
   /**
@@ -120,7 +118,7 @@ class RequestTest extends TestCase
   {
     $request = Request::createFromGlobals();
     /**
-     * @var \Cubex\Http\Request $request
+     * @var \packaged\Http\Request $request
      */
     $request->server->set('REQUEST_URI', $path);
     if($offset == -1)
@@ -154,7 +152,7 @@ class RequestTest extends TestCase
   {
     $request = Request::createFromGlobals();
     /**
-     * @var \Cubex\Http\Request $request
+     * @var Request $request
      */
     $request->server->set('REQUEST_URI', $path);
     $this->assertEquals($expect, $request->offsetPath($offset, $limit));
@@ -219,9 +217,9 @@ class RequestTest extends TestCase
     $this->assertEquals('MY_UA', $request->userAgent('MY_UA'));
 
     $request = new Request();
-    $server = ['HTTP_USER_AGENT' => 'Cubex Browser'];
+    $server = ['HTTP_USER_AGENT' => 'Packaged Browser'];
     $request->initialize([], [], [], [], [], $server);
-    $this->assertEquals('Cubex Browser', $request->userAgent());
+    $this->assertEquals('Packaged Browser', $request->userAgent());
   }
 
   public function testReferrer()
@@ -233,9 +231,9 @@ class RequestTest extends TestCase
     $this->assertEquals('MY_REF', $request->userAgent('MY_REF'));
 
     $request = new Request();
-    $server = ['HTTP_REFERER' => 'http://www.cubex.io'];
+    $server = ['HTTP_REFERER' => 'http://www.packaged.in'];
     $request->initialize([], [], [], [], [], $server);
-    $this->assertEquals('http://www.cubex.io', $request->referrer());
+    $this->assertEquals('http://www.packaged.in', $request->referrer());
   }
 
   public function testXForwardedFor()
