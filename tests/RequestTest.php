@@ -253,13 +253,13 @@ class RequestTest extends TestCase
 
   public function testAppEngineIp()
   {
-    $request = new Request();
+    $classicRequest = new Request();
     $server = [
       'REMOTE_ADDR'              => '1.2.3.4',
-      'SERVER_SOFTWARE'          => 'Google App Engine/1.0',
       'HTTP_X_APPENGINE_USER_IP' => '5.6.7.8',
     ];
-    $request->initialize([], [], [], [], [], $server);
-    $this->assertEquals(['1.2.3.4', '5.6.7.8'], $request->getClientIps());
+    $classicRequest->initialize([], [], [], [], [], $server);
+    $classicRequest->headers->set('x-appengine-user-ip', '0.0.0.0'); //fake ip through header
+    $this->assertEquals(['1.2.3.4', '5.6.7.8'], $classicRequest->getClientIps());
   }
 }

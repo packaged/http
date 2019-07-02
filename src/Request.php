@@ -280,10 +280,10 @@ class Request extends \Symfony\Component\HttpFoundation\Request
       'clientIps',
       function () {
         $ips = parent::getClientIps();
-        // Add AppEngine client ip
-        if(System::isAppEngine($this->server->get('SERVER_SOFTWARE')) && $this->headers->has('x-appengine-user-ip'))
+        // AppEngine client IP
+        if($this->server->has('HTTP_X_APPENGINE_USER_IP'))
         {
-          $ips[] = $this->headers->get('x-appengine-user-ip');
+          $ips[] = $this->server->get('HTTP_X_APPENGINE_USER_IP');
         }
         return $ips;
       }
