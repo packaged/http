@@ -250,4 +250,16 @@ class RequestTest extends TestCase
     $request->setTrustedProxies(['8.8.4.4'], -1);
     $this->assertEquals('8.8.8.8', $request->getClientIp());
   }
+
+  public function testAppEngineIp()
+  {
+    $request = new Request();
+    $server = [
+      'REMOTE_ADDR'              => '1.2.3.4',
+      'SERVER_SOFTWARE'          => 'Google App Engine/1.0',
+      'HTTP_X_APPENGINE_USER_IP' => '5.6.7.8',
+    ];
+    $request->initialize([], [], [], [], [], $server);
+    $this->assertEquals(['1.2.3.4', '5.6.7.8'], $request->getClientIps());
+  }
 }
