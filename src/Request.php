@@ -3,6 +3,7 @@ namespace Packaged\Http;
 
 use Packaged\Helpers\FQDN;
 use Packaged\Helpers\Strings;
+use Packaged\Helpers\System;
 
 class Request extends \Symfony\Component\HttpFoundation\Request
 {
@@ -266,6 +267,27 @@ class Request extends \Symfony\Component\HttpFoundation\Request
   public function referrer($default = null)
   {
     return $this->server->get('REFERER', $this->server->get('HTTP_REFERER', $default));
+  }
+
+  /**
+   * Return an array of ips
+   *
+   * @return array
+   */
+  public function getClientIps()
+  {
+    return $this->_cachedPart(
+      'clientIps',
+      function () {
+        $ips = parent::getClientIps();
+        // Add AppEngine client ip
+        if(System::isAppEngine($this->server->get('SERVER_SOFTWARE')) && $this->headers->has('x-appengine-user-ip'))
+        {
+          $ips[] = $this->headers->get('x-appengine-user-ip');
+        }
+        return $ips;
+      }
+    );
   }
 
   /**
