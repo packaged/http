@@ -7,7 +7,7 @@ use function sprintf;
 
 class ContentSecurityPolicy implements Header
 {
-  /* DIRECTIVES */
+  /* FETCH DIRECTIVES */
   const CHILD_SRC = 'child-src';
   const CONNECT_SRC = 'connect-src';
   const DEFAULT_SRC = 'default-src';
@@ -25,6 +25,25 @@ class ContentSecurityPolicy implements Header
   const STYLE_SRC_ELEM = 'style-src-elem';
   const STYLE_SRC_ATTR = 'style-src-attr';
   const WORKER_SRC = 'worker-src';
+
+  /* DOCUMENT DIRECTIVES */
+  const BASE_URI = 'base-uri';
+  const PLUGIN_TYPES = 'plugin-types';
+  const SANDBOX = 'sandbox';
+
+  /* NAVIGATION DIRECTIVES */
+  const FORM_ACTION = 'form-action';
+  const FRAME_ANCESTORS = 'frame-ancestors';
+  const NAVIGATE_TO = 'navigate-to';
+
+  /* REPORTING DIRECTIVES */
+  const REPORT_TO = 'report-to';
+  const REPORT_URI = 'report-uri';
+
+  /* OTHER DIRECTIVES */
+  const BLOCK_ALL_MIXED_CONTENT = 'block-all-mixed-content';
+  const REFERRER = 'referrer';
+  const UPGRADE_INSECURE_REQUESTS = 'upgrade-insecure-requests';
 
   protected $_directives = ['default-src' => ["'self'"]];
 
