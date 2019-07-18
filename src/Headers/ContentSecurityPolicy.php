@@ -1,17 +1,32 @@
 <?php
 namespace Packaged\Http\Headers;
 
-use function array_filter;
+use function array_merge;
 use function implode;
+use function sprintf;
 
 class ContentSecurityPolicy implements Header
 {
-  protected $_defaultSrc = ["'self'"];
-  protected $_styleSrc = [];
-  protected $_frameSrc = [];
-  protected $_mediaSrc = [];
-  protected $_fontSrc = [];
-  protected $_scriptSrc = [];
+  /* DIRECTIVES */
+  const CHILD_SRC = 'child-src';
+  const CONNECT_SRC = 'connect-src';
+  const DEFAULT_SRC = 'default-src';
+  const FONT_SRC = 'font-src';
+  const FRAME_SRC = 'frame-src';
+  const IMG_SRC = 'img-src';
+  const MANIFEST_SRC = 'manifest-src';
+  const MEDIA_SRC = 'media-src';
+  const OBJECT_SRC = 'object-src';
+  const PREFETCH_SRC = 'prefetch-src';
+  const SCRIPT_SRC = 'script-src';
+  const SCRIPT_SRC_ELEM = 'script-src-elem';
+  const SCRIPT_SRC_ATTR = 'script-src-attr';
+  const STYLE_SRC = 'style-src';
+  const STYLE_SRC_ELEM = 'style-src-elem';
+  const STYLE_SRC_ATTR = 'style-src-attr';
+  const WORKER_SRC = 'worker-src';
+
+  protected $_directives = ['default-src' => ["'self'"]];
 
   public function getKey(): string
   {
@@ -20,63 +35,24 @@ class ContentSecurityPolicy implements Header
 
   public function getValue()
   {
-    return implode(
-      '; ',
-      array_filter(
-        [
-          $this->_formatOptions('default-src', $this->_defaultSrc),
-          $this->_formatOptions('style-src', $this->_styleSrc),
-          $this->_formatOptions('frame-src', $this->_frameSrc),
-          $this->_formatOptions('media-src', $this->_mediaSrc),
-          $this->_formatOptions('font-src', $this->_fontSrc),
-          $this->_formatOptions('script-src', $this->_scriptSrc),
-        ]
-      )
-    );
-  }
-
-  protected function _formatOptions(string $type, array $options): string
-  {
-    if(empty($options))
+    $directives = [];
+    foreach($this->_directives as $directive => $policy)
     {
-      return '';
+      $directives[] = sprintf("%s %s", $directive, implode(" ", $policy));
     }
-    return $type . " " . implode(' ', $options);
+
+    return implode('; ', $directives);
   }
 
-  public function addDefaultSrc($src)
+  public function setDirective($directive, ...$src)
   {
-    $this->_defaultSrc[] = $src;
+    $this->_directives[$directive] = $src;
     return $this;
   }
 
-  public function addStyleSrc($src)
+  public function appendDirective($directive, ...$src)
   {
-    $this->_styleSrc[] = $src;
-    return $this;
-  }
-
-  public function addFrameSrc($src)
-  {
-    $this->_frameSrc[] = $src;
-    return $this;
-  }
-
-  public function addMediaSrc($src)
-  {
-    $this->_mediaSrc[] = $src;
-    return $this;
-  }
-
-  public function addFontSrc($src)
-  {
-    $this->_fontSrc[] = $src;
-    return $this;
-  }
-
-  public function addScriptSrc($src)
-  {
-    $this->_scriptSrc[] = $src;
+    $this->_directives[$directive] = array_merge($this->_directives[$directive], $src);
     return $this;
   }
 
