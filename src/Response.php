@@ -1,6 +1,8 @@
 <?php
 namespace Packaged\Http;
 
+use Packaged\Http\Headers\Header;
+
 class Response extends \Symfony\Component\HttpFoundation\Response
 {
   protected $_callTime;
@@ -73,7 +75,7 @@ class Response extends \Symfony\Component\HttpFoundation\Response
       if(defined('PHP_START'))
       {
         $this->headers->set(
-          "X-Execution-Time",
+          "x-execution-time",
           number_format((microtime(true) - PHP_START) * 1000, 3) . ' ms'
         );
       }
@@ -81,10 +83,16 @@ class Response extends \Symfony\Component\HttpFoundation\Response
       if($this->_callTime > 0)
       {
         $this->headers->set(
-          'X-Call-Time',
+          'x-call-time',
           number_format((microtime(true) - $this->_callTime) * 1000, 3) . ' ms'
         );
       }
     }
+  }
+
+  public function setHeader(Header $header, bool $replace = true)
+  {
+    $this->headers->set($header->getKey(), $header->getValue(), $replace);
+    return $this;
   }
 }
