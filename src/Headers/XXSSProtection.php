@@ -10,7 +10,6 @@ class XXSSProtection implements Header
 
   public function getValue()
   {
-    return '1; mode=block;';
+    return '1; mode=block';
   }
-
 }
