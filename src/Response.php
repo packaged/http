@@ -6,6 +6,7 @@ use Packaged\Http\Headers\Header;
 class Response extends \Symfony\Component\HttpFoundation\Response
 {
   protected $_callTime;
+  protected $_headersSent = false;
   protected $_sendDebugHeaders;
 
   /**
@@ -58,8 +59,13 @@ class Response extends \Symfony\Component\HttpFoundation\Response
    */
   public function sendHeaders()
   {
-    $this->setDebugHeaders();
-    return parent::sendHeaders();
+    if(!$this->_headersSent)
+    {
+      $this->_headersSent = true;
+      $this->setDebugHeaders();
+      return parent::sendHeaders();
+    }
+    return $this;
   }
 
   /**
