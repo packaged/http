@@ -2,7 +2,7 @@
 
 namespace Packaged\Http\Cookies;
 
-class DefaultHandler extends AbstractCookieHandler
+abstract class AbstractCookieHandler implements CookieHandler
 {
   public function canHandle(string $name, string $value = null): bool
   {

@@ -16,6 +16,7 @@ class CookieJar implements ConfigurableInterface
    * @var CookieHandler[]
    */
   protected $_handlers = [];
+  protected $_handlerPriority = [];
 
   /**
    * @var Cookie[]
@@ -46,19 +47,39 @@ class CookieJar implements ConfigurableInterface
     {
       throw new \Exception("A cookie handler already exists with priority " . $priority);
     }
+
     $this->_handlers[$priority] = $handler;
+    $this->_prioritiseHandlers();
+
     return $this;
+  }
+
+  protected function _prioritiseHandlers()
+  {
+    $this->_handlerPriority = array_keys($this->_handlers);
+    sort($this->_handlerPriority);
+  }
+
+  public function removeHandler(int $priority): bool
+  {
+    if(isset($this->_handlers[$priority]))
+    {
+      unset($this->_handlers[$priority]);
+      return true;
+    }
+    return false;
   }
 
   protected function _getHandler($name, $value): CookieHandler
   {
-    foreach($this->_handlers as $handler)
+    foreach($this->_handlerPriority as $priority)
     {
-      if($handler->canHandle($name, $value))
+      if(isset($this->_handlers[$priority]) && $this->_handlers[$priority]->canHandle($name, $value))
       {
-        return $handler;
+        return $this->_handlers[$priority];
       }
     }
+    return new DefaultHandler();
   }
 
   public function hydrate(Request $request)
@@ -72,13 +93,13 @@ class CookieJar implements ConfigurableInterface
 
   public function read(string $name, bool $checkQueued = false)
   {
-    return $this->_requestCookies[$name] ??
-      ($checkQueued && isset($this->_responseCookies[$name]) ? $this->_responseCookies[$name]['v'] : null);
+    return $checkQueued && isset($this->_responseCookies[$name]) ? $this->_responseCookies[$name]['v']
+      : ($this->_requestCookies[$name] ?? null);
   }
 
-  public function has(string $name): bool
+  public function has(string $name, bool $checkQueued = false): bool
   {
-    return isset($this->_requestCookies[$name]) || isset($this->_responseCookies[$name]);
+    return isset($this->_requestCookies[$name]) || ($checkQueued && isset($this->_responseCookies[$name]));
   }
 
   public function store(string $name, string $value = null, $expireSeconds = 0)
