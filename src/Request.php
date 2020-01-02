@@ -3,7 +3,6 @@ namespace Packaged\Http;
 
 use Packaged\Helpers\FQDN;
 use Packaged\Helpers\Strings;
-use Packaged\Helpers\System;
 
 class Request extends \Symfony\Component\HttpFoundation\Request
 {

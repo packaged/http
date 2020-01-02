@@ -2,9 +2,11 @@
 
 namespace Packaged\Tests\Http;
 
+use Packaged\Helpers\Objects;
 use Packaged\Http\Cookies\CookieJar;
 use Packaged\Http\Cookies\LowercaseCookieHandler;
 use Packaged\Http\Request;
+use Packaged\Http\Response;
 use PHPUnit\Framework\TestCase;
 
 class CookieJarTest extends TestCase
@@ -61,5 +63,22 @@ class CookieJarTest extends TestCase
 
     $this->expectExceptionMessage("A cookie handler already exists with priority 10");
     $jar->addHandler(new LowercaseCookieHandler(), 10);
+  }
+
+  public function testResponse()
+  {
+    $req = new Request([], [], [], ['ABC' => 'def']);
+    $jar = new CookieJar();
+    $jar->hydrate($req);
+    $jar->store('newval', 'abc', 10);
+    $jar->delete('oldval');
+    $response = new Response();
+    $jar->applyToResponse($response);
+
+    $cookies = Objects::mpull($response->headers->getCookies(), 'getValue', 'getName');
+    self::assertCount(2, $cookies);
+    self::assertArrayHasKey('oldval', $cookies);
+    self::assertArrayHasKey('newval', $cookies);
+    self::assertEquals('abc', $cookies['newval']);
   }
 }
