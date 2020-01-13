@@ -241,6 +241,11 @@ class Request extends \Symfony\Component\HttpFoundation\Request
     {
       $ip = $this->getClientIp();
     }
+    return static::isPrivateIP($ip);
+  }
+
+  public static function isPrivateIP($ip)
+  {
     return Strings::startsWithAny($ip, ['192.168.', '10.', '172.16.', '127.']);
   }
 
