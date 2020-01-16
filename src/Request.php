@@ -121,21 +121,26 @@ class Request extends \Symfony\Component\HttpFoundation\Request
    *
    * @return string mixed
    */
+  protected $_formatCache;
+
   public function urlSprintf($format = "%a")
   {
-    $formater = [
-      "%a" => $this->protocol() . $this->getHttpHost(),
-      "%r" => $this->getPort(),
-      "%o" => $this->isStandardPort() ? '' : ':' . $this->getPort(),
-      "%i" => $this->getPathInfo(),
-      "%p" => $this->protocol(),
-      "%h" => $this->getHttpHost(),
-      "%d" => $this->domain(),
-      "%s" => $this->subDomain(),
-      "%t" => $this->tld(),
-    ];
+    if($this->_formatCache === null)
+    {
+      $this->_formatCache = [
+        "%a" => $this->protocol() . $this->getHttpHost(),
+        "%r" => $this->port(),
+        "%o" => $this->isStandardPort() ? '' : ':' . $this->port(),
+        "%i" => $this->getPathInfo(),
+        "%p" => $this->protocol(),
+        "%h" => $this->getHttpHost(),
+        "%d" => $this->domain(),
+        "%s" => $this->subDomain(),
+        "%t" => $this->tld(),
+      ];
+    }
 
-    return str_replace(array_keys($formater), $formater, $format);
+    return str_replace(array_keys($this->_formatCache), $this->_formatCache, $format);
   }
 
   /**
