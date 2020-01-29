@@ -11,6 +11,7 @@ class LinkBuilder
   protected $_tld;
   protected $_port;
   protected $_path;
+  protected $_query = [];
   /**
    * @var Request
    */
@@ -45,7 +46,8 @@ class LinkBuilder
       )
       . ($this->_isStandardPort($scheme, $port) ? '' : ':' . $port)
       . (isset($this->_path[0]) && $this->_path[0] !== '/' ? '/' : '')
-      . $this->_path;
+      . $this->_path
+      . (!empty($this->_query) ? '?' . http_build_query($this->_query) : null);
   }
 
   protected function _isStandardPort($scheme, $port)
@@ -116,6 +118,29 @@ class LinkBuilder
   public function setPath($path)
   {
     $this->_path = $path;
+    return $this;
+  }
+
+  /**
+   * @param array $queryParams
+   *
+   * @return $this
+   */
+  public function setQuery(array $queryParams)
+  {
+    $this->_query = $queryParams;
+    return $this;
+  }
+
+  /**
+   * @param $key
+   * @param $value
+   *
+   * @return $this
+   */
+  public function addQuery($key, $value)
+  {
+    $this->_query[$key] = $value;
     return $this;
   }
 }

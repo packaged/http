@@ -45,5 +45,17 @@ class LinkBuilderTest extends TestCase
     self::assertEquals('https://secure.cubex.com/order', $lb);
     self::assertEquals('https://secure.cubex.com/order', $lb->__toString());
     self::assertEquals('https://secure.cubex.com/order', (string)$lb);
+
+    $lb->addQuery('a', 'b');
+    self::assertEquals('https://secure.cubex.com/order?a=b', $lb);
+
+    $lb->addQuery('c', 'd')->addQuery('f', 'g');
+    self::assertEquals('https://secure.cubex.com/order?a=b&c=d&f=g', $lb);
+
+    $lb->addQuery('c', 'e')->addQuery('f', 'g');
+    self::assertEquals('https://secure.cubex.com/order?a=b&c=e&f=g', $lb);
+
+    $lb->setQuery(['a' => 1, 'b' => 2]);
+    self::assertEquals('https://secure.cubex.com/order?a=1&b=2', $lb);
   }
 }
