@@ -17,11 +17,12 @@ class LinkBuilder
    */
   protected $_request;
 
-  public static function fromRequest(Request $request, $path = '')
+  public static function fromRequest(Request $request, $path = '', $query = [])
   {
     $lb = new static();
     $lb->_request = $request;
     $lb->_path = $path === null ? $request->path() : $path;
+    $lb->_query = $query === null ? $request->query->all() : $query;
     return $lb;
   }
 

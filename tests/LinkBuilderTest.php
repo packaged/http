@@ -8,13 +8,14 @@ use PHPUnit\Framework\TestCase;
 
 class LinkBuilderTest extends TestCase
 {
-
   public function testAsUrl()
   {
-    $request = Request::createFromGlobals();
-    $request->headers->set('HOST', 'www.packaged.local:81');
-    $request->server->set('REQUEST_URI', '/path');
+    $request = Request::create('www.packaged.local:81/path?key=value');
 
+    self::assertEquals(
+      'http://www.packaged.local:81/path?key=value',
+      LinkBuilder::fromRequest($request, null, null)->asUrl()
+    );
     self::assertEquals('http://www.packaged.local:81', LinkBuilder::fromRequest($request)->asUrl());
     self::assertEquals('http://www.packaged.local:81/ab', LinkBuilder::fromRequest($request, '/ab')->asUrl());
     self::assertEquals('http://www.packaged.local', LinkBuilder::fromRequest($request)->setPort(80)->asUrl());
