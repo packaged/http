@@ -45,7 +45,7 @@ class LinkBuilder
           ($this->_tld ?? $this->_request->tld()),
         ]
       )
-      . ($this->_isStandardPort($scheme, $port) ? '' : ':' . $port)
+      . ($this->_isStandardPort($this->_scheme ?? $this->_request->getScheme(), $port) ? '' : ':' . $port)
       . (isset($this->_path[0]) && $this->_path[0] !== '/' ? '/' : '')
       . $this->_path
       . (!empty($this->_query) ? '?' . http_build_query($this->_query) : null);
