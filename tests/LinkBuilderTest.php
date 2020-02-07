@@ -58,5 +58,11 @@ class LinkBuilderTest extends TestCase
 
     $lb->setQuery(['a' => 1, 'b' => 2]);
     self::assertEquals('https://secure.cubex.com/order?a=1&b=2', $lb);
+
+    $request = Request::create('http://www.packaged.local/');
+    $request->headers->set('X_FORWARDED_PROTO', 'https');
+    $lb = LinkBuilder::fromRequest($request);
+    $lb->setSubDomain('secure');
+    self::assertEquals('https://secure.packaged.local', $lb->asUrl());
   }
 }
