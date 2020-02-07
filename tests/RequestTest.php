@@ -251,6 +251,17 @@ class RequestTest extends TestCase
     $this->assertEquals('8.8.8.8', $request->getClientIp());
   }
 
+  public function testXForwardedProto()
+  {
+    $request = new Request();
+    $server = [
+      'HTTP_X_FORWARDED_PROTO' => 'https',
+    ];
+    $request->initialize([], [], [], [], [], $server);
+    $this->assertFalse($request->isSecure());
+    $this->assertTrue($request->isSecure(true));
+  }
+
   public function testAppEngineIp()
   {
     $classicRequest = new Request();

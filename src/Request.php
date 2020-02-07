@@ -3,6 +3,7 @@ namespace Packaged\Http;
 
 use Packaged\Helpers\FQDN;
 use Packaged\Helpers\Strings;
+use function in_array;
 
 class Request extends \Symfony\Component\HttpFoundation\Request
 {
@@ -43,6 +44,21 @@ class Request extends \Symfony\Component\HttpFoundation\Request
   public function getDefinedTlds()
   {
     return $this->getFqdn()->getDefinedTlds();
+  }
+
+  public function isSecure($allowUntrustedHeaders = false)
+  {
+    return $this->_cachedPart(
+      'isSecure-' . ($allowUntrustedHeaders ? 1 : 0),
+      function () use ($allowUntrustedHeaders) {
+        if($allowUntrustedHeaders
+          && in_array(strtolower($this->headers->get('X_FORWARDED_PROTO') ?? ''), ['https', 'on', 'ssl', '1'], true))
+        {
+          return true;
+        }
+        return parent::isSecure();
+      }
+    );
   }
 
   /**
