@@ -33,7 +33,7 @@ class LinkBuilder
 
   public function asUrl(): string
   {
-    $scheme = $this->_scheme ?? $this->_request->getScheme();
+    $scheme = $this->_scheme ?? ($this->_request->isSecure(true) ? 'https' : 'http');
     $port = $this->_port ?? $this->_request->port();
     return
       ($scheme . '://')
