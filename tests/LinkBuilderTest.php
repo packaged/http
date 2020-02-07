@@ -61,6 +61,8 @@ class LinkBuilderTest extends TestCase
 
     $request = Request::create('http://www.packaged.local/');
     $request->headers->set('X_FORWARDED_PROTO', 'https');
+    $this->assertFalse($request->isSecure());
+    $this->assertTrue($request->isSecure(true));
     $lb = LinkBuilder::fromRequest($request);
     $lb->setSubDomain('secure');
     self::assertEquals('https://secure.packaged.local', $lb->asUrl());
