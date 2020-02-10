@@ -45,7 +45,7 @@ class ContentSecurityPolicy implements Header
   const REFERRER = 'referrer';
   const UPGRADE_INSECURE_REQUESTS = 'upgrade-insecure-requests';
 
-  protected $_directives = ['default-src' => ["'self'"]];
+  protected $_directives;
 
   public function getKey(): string
   {
@@ -61,6 +61,36 @@ class ContentSecurityPolicy implements Header
     }
 
     return implode('; ', $directives);
+  }
+
+  public function __construct(array $directives = [self::DEFAULT_SRC => ["'self'"]])
+  {
+    $this->_directives = $directives;
+  }
+
+  public static function blank()
+  {
+    return new static([]);
+  }
+
+  /**
+   * Clear all directives, or a single type
+   *
+   * @param null|string $directive
+   *
+   * @return $this
+   */
+  public function clearDirective($directive = null)
+  {
+    if($directive === null)
+    {
+      $this->_directives = [];
+    }
+    else
+    {
+      unset($this->_directives[$directive]);
+    }
+    return $this;
   }
 
   public function setDirective($directive, ...$src)
