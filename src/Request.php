@@ -111,6 +111,29 @@ class Request extends \Symfony\Component\HttpFoundation\Request
     return (int)$this->_cachedPart('port', function () { return $this->getPort(); });
   }
 
+  /**
+   * Clear internal request calculation cache
+   *
+   * @return $this
+   */
+  public function clearInternalCache()
+  {
+    return $this->_clearCachedPart();
+  }
+
+  protected function _clearCachedPart($part = null)
+  {
+    if($part === null)
+    {
+      $this->_partCache = [];
+    }
+    else
+    {
+      unset($this->_partCache[$part]);
+    }
+    return $this;
+  }
+
   protected function _cachedPart($part, callable $retrieve)
   {
     if(!isset($this->_partCache[$part]))
