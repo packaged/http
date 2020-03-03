@@ -57,7 +57,7 @@ class ContentSecurityPolicy implements Header
     $directives = [];
     foreach($this->_directives as $directive => $policy)
     {
-      $directives[] = sprintf("%s %s", $directive, implode(" ", $policy));
+      $directives[] = sprintf("%s %s", $directive, is_array($policy) ? implode(" ", $policy) : (string)$policy);
     }
 
     return implode('; ', $directives);
@@ -101,7 +101,7 @@ class ContentSecurityPolicy implements Header
 
   public function appendDirective($directive, ...$src)
   {
-    $this->_directives[$directive] = array_merge($this->_directives[$directive], $src);
+    $this->_directives[$directive] = array_merge($this->_directives[$directive] ?? [], $src);
     return $this;
   }
 
