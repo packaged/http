@@ -134,16 +134,7 @@ class CookieJar implements ConfigurableInterface
     {
       $handler = $this->_getHandler($name, $rc['v']);
       $response->headers->setCookie(
-        Cookie::create(
-          $handler->encodeName($name),
-          $handler->encodeValue($rc['v']),
-          $rc['e'],
-          null,
-          $domain,
-          $secure,
-          true,
-          false
-        )
+        Cookie::create($handler->encodeName($name), $handler->encodeValue($rc['v']), $rc['e'], null, $domain, $secure)
       );
     }
 
@@ -151,7 +142,9 @@ class CookieJar implements ConfigurableInterface
     foreach($this->_deleteCookies as $cookieName)
     {
       $handler = $this->_getHandler($cookieName, null);
-      $response->headers->setCookie(Cookie::create($handler->encodeName($cookieName), null, '-2628000', null, $domain));
+      $response->headers->setCookie(
+        Cookie::create($handler->encodeName($cookieName), null, '-2628000', null, $domain, $secure)
+      );
     }
 
     return $response;
