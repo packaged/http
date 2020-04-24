@@ -182,6 +182,11 @@ class Request extends \Symfony\Component\HttpFoundation\Request
     return str_replace(array_keys($this->_formatCache), $this->_formatCache, $format);
   }
 
+  public function url()
+  {
+    return $this->getSchemeAndHttpHost() . $this->getRequestUri();
+  }
+
   /**
    * Detect if the port is the standard based on the scheme e.g. http = 80
    *

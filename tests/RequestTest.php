@@ -273,4 +273,12 @@ class RequestTest extends TestCase
     $classicRequest->headers->set('x-appengine-user-ip', '0.0.0.0'); //fake ip through header
     $this->assertEquals(['1.2.3.4', '5.6.7.8'], $classicRequest->getClientIps());
   }
+
+  public function testUrl()
+  {
+    $request = Request::createFromGlobals();
+    $request->headers->set('HOST', 'www.packaged.local:81');
+    $request->server->set('REQUEST_URI', '/path/uri');
+    $this->assertEquals('http://www.packaged.local:81/path/uri', $request->url());
+  }
 }
