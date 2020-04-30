@@ -5,6 +5,7 @@ namespace Packaged\Tests\Http;
 use Packaged\Http\LinkBuilder\LinkBuilder;
 use Packaged\Http\Request;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class LinkBuilderTest extends TestCase
 {
@@ -58,6 +59,10 @@ class LinkBuilderTest extends TestCase
 
     $lb->setQuery(['a' => 1, 'b' => 2]);
     self::assertEquals('https://secure.cubex.com/order?a=1&b=2', $lb);
+
+    $resp = $lb->toRedirect(301);
+    $this->assertInstanceOf(RedirectResponse::class, $resp);
+    $this->assertEquals(301, $resp->getStatusCode());
 
     $request = Request::create('http://www.packaged.local/');
     $request->headers->set('X_FORWARDED_PROTO', 'https');

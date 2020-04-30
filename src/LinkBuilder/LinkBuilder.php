@@ -2,6 +2,7 @@
 namespace Packaged\Http\LinkBuilder;
 
 use Packaged\Http\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class LinkBuilder
 {
@@ -36,8 +37,7 @@ class LinkBuilder
     $scheme = $this->_scheme ?? ($this->_request->isSecure(true) ? 'https' : 'http');
     $port = $this->_port ?? $this->_request->port();
     return
-      ($scheme . '://')
-      . implode(
+      ($scheme . '://') . implode(
         '.',
         [
           ($this->_subDomain ?? $this->_request->subDomain()),
@@ -143,5 +143,10 @@ class LinkBuilder
   {
     $this->_query[$key] = $value;
     return $this;
+  }
+
+  public function toRedirect($status = 302, $headers = [])
+  {
+    return RedirectResponse::create($this->asUrl(), $status, $headers);
   }
 }
