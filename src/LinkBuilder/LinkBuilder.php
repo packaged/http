@@ -145,7 +145,7 @@ class LinkBuilder
     return $this;
   }
 
-  public function toRedirect($status = 302, $headers = [])
+  public function toRedirect($status = 307, $headers = [])
   {
     return RedirectResponse::create($this->asUrl(), $status, $headers);
   }
