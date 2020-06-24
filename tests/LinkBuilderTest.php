@@ -71,5 +71,11 @@ class LinkBuilderTest extends TestCase
     $lb = LinkBuilder::fromRequest($request);
     $lb->setSubDomain('secure');
     self::assertEquals('https://secure.packaged.local', $lb->asUrl());
+
+    $lb->setFragment('#abc');
+    self::assertEquals('abc', $lb->getFragment());
+    self::assertEquals('https://secure.packaged.local#abc', $lb->asUrl());
+    $lb->setFragment('def');
+    self::assertEquals('https://secure.packaged.local#def', $lb->asUrl());
   }
 }

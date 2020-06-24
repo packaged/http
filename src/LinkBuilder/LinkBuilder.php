@@ -12,6 +12,7 @@ class LinkBuilder
   protected $_tld;
   protected $_port;
   protected $_path;
+  protected $_fragment;
   protected $_query = [];
   /**
    * @var Request
@@ -48,7 +49,8 @@ class LinkBuilder
       . ($this->_isStandardPort($this->_scheme ?? $this->_request->getScheme(), $port) ? '' : ':' . $port)
       . (isset($this->_path[0]) && $this->_path[0] !== '/' ? '/' : '')
       . $this->_path
-      . (!empty($this->_query) ? '?' . http_build_query($this->_query) : null);
+      . (!empty($this->_query) ? '?' . http_build_query($this->_query) : null)
+      . ($this->_fragment ? '#' . $this->_fragment : null);
   }
 
   protected function _isStandardPort($scheme, $port)
@@ -142,6 +144,25 @@ class LinkBuilder
   public function addQuery($key, $value)
   {
     $this->_query[$key] = $value;
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getFragment()
+  {
+    return $this->_fragment;
+  }
+
+  /**
+   * @param string $fragment
+   *
+   * @return LinkBuilder
+   */
+  public function setFragment(string $fragment)
+  {
+    $this->_fragment = ltrim($fragment, '#');
     return $this;
   }
 
