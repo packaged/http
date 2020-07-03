@@ -1,6 +1,7 @@
 <?php
 namespace Packaged\Http\LinkBuilder;
 
+use Packaged\Helpers\Path;
 use Packaged\Http\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -114,13 +115,24 @@ class LinkBuilder
   }
 
   /**
-   * @param mixed $path
+   * @param string $path
    *
    * @return LinkBuilder
    */
   public function setPath($path)
   {
     $this->_path = $path;
+    return $this;
+  }
+
+  /**
+   * @param string $path
+   *
+   * @return $this
+   */
+  public function appendPath($path)
+  {
+    $this->_path = Path::url($this->_path, $path);
     return $this;
   }
 
