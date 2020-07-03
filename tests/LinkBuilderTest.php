@@ -60,6 +60,9 @@ class LinkBuilderTest extends TestCase
     $lb->setQuery(['a' => 1, 'b' => 2]);
     self::assertEquals('https://secure.cubex.com/order?a=1&b=2', $lb);
 
+    $lb->appendPath('step');
+    self::assertEquals('https://secure.cubex.com/order/step?a=1&b=2', $lb);
+
     $resp = $lb->toRedirect(301);
     $this->assertInstanceOf(RedirectResponse::class, $resp);
     $this->assertEquals(301, $resp->getStatusCode());
