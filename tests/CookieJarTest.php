@@ -81,4 +81,15 @@ class CookieJarTest extends TestCase
     self::assertArrayHasKey('newval', $cookies);
     self::assertEquals('abc', $cookies['newval']);
   }
+
+  public function testAll()
+  {
+    $req = new Request([], [], [], ['ABC' => 'def']);
+    $jar = new CookieJar();
+    $jar->hydrate($req);
+    $jar->store('newval', 'abc', 10);
+
+    self::assertSame(['ABC'], array_keys($jar->all(false)));
+    self::assertSame(['ABC', 'newval'], array_keys($jar->all(true)));
+  }
 }

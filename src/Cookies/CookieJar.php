@@ -91,6 +91,16 @@ class CookieJar implements ConfigurableInterface
     }
   }
 
+  public function all($checkQueued = false)
+  {
+    $cookies = $this->_requestCookies;
+    if($checkQueued)
+    {
+      $cookies = array_merge($cookies, $this->_responseCookies);
+    }
+    return $cookies;
+  }
+
   public function read(string $name, bool $checkQueued = false)
   {
     return $checkQueued && isset($this->_responseCookies[$name]) ? $this->_responseCookies[$name]['v']
