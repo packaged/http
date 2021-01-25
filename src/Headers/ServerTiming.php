@@ -9,7 +9,7 @@ class ServerTiming implements Header
   {
     $this->_timings[$key] = "$key"
       . ($duration !== null ? ";dur=$duration" : '')
-      . ($description !== null ? ";desc=$description" : '');
+      . ($description !== null ? ";desc=\"$description\"" : '');
     return $this;
   }
 
