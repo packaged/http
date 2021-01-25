@@ -101,14 +101,34 @@ class Response extends \Symfony\Component\HttpFoundation\Response
 
       if($timing->hasTimings())
       {
-        $this->setHeader($timing);
+        $this->addHeader($timing);
       }
     }
   }
 
+  /**
+   * Set a header, defaulting to replace the existing
+   *
+   * @param Header $header
+   * @param bool   $replace
+   *
+   * @return $this
+   */
   public function setHeader(Header $header, bool $replace = true)
   {
     $this->headers->set($header->getKey(), $header->getValue(), $replace);
     return $this;
+  }
+
+  /**
+   * Add a header, without replacing existing
+   *
+   * @param Header $header
+   *
+   * @return $this
+   */
+  public function addHeader(Header $header)
+  {
+    return $this->setHeader($header, false);
   }
 }
