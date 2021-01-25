@@ -2,6 +2,7 @@
 namespace Packaged\Http;
 
 use Packaged\Http\Headers\Header;
+use Packaged\Http\Headers\ServerTiming;
 
 class Response extends \Symfony\Component\HttpFoundation\Response
 {
@@ -77,9 +78,12 @@ class Response extends \Symfony\Component\HttpFoundation\Response
   {
     if($this->_sendDebugHeaders === true)
     {
+      $timing = new ServerTiming();
+
       //Add the exec time as a header if PHP_START has been defined by the project
       if(defined('PHP_START'))
       {
+        $timing->add('execution', (microtime(true) - PHP_START) * 1000, "Execution Time");
         $this->headers->set(
           "x-execution-time",
           number_format((microtime(true) - PHP_START) * 1000, 3) . ' ms'
@@ -92,6 +96,12 @@ class Response extends \Symfony\Component\HttpFoundation\Response
           'x-call-time',
           number_format((microtime(true) - $this->_callTime) * 1000, 3) . ' ms'
         );
+        $timing->add('calltime', (microtime(true) - $this->_callTime) * 1000, "Call Time");
+      }
+
+      if($timing->hasTimings())
+      {
+        $this->setHeader($timing);
       }
     }
   }
