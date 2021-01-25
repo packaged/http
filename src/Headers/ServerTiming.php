@@ -5,6 +5,13 @@ class ServerTiming implements Header
 {
   protected $_timings = [];
 
+  public static function single($key, $duration, $description = "")
+  {
+    $h = new static();
+    $h->add($key, $duration, $description);
+    return $h;
+  }
+
   public function add($key, $duration, $description = "")
   {
     $this->_timings[$key] = "$key"
