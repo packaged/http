@@ -20,7 +20,7 @@ class ServerTiming implements Header
 
   public function getKey(): string
   {
-    return 'Server-Timings';
+    return 'Server-Timing';
   }
 
   public function getValue()
