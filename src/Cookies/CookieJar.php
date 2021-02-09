@@ -4,8 +4,8 @@ namespace Packaged\Http\Cookies;
 
 use Packaged\Config\ConfigurableInterface;
 use Packaged\Config\ConfigurableTrait;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Packaged\Http\Request;
+use Packaged\Http\Response;
 
 class CookieJar implements ConfigurableInterface
 {

@@ -56,7 +56,7 @@ class Response extends \Symfony\Component\HttpFoundation\Response
    *
    * @inheritdoc
    *
-   * @return \Symfony\Component\HttpFoundation\Response
+   * @return Response
    */
   public function sendHeaders()
   {
