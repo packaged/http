@@ -1,372 +1,55 @@
 <?php
 namespace Packaged\Http;
 
-use Packaged\Helpers\FQDN;
-use Packaged\Helpers\Strings;
-use function in_array;
+use Packaged\Http\Interfaces\RequestMethod;
+use Packaged\Map\ArrayDataMap;
+use Packaged\Map\DataMap;
 
-class Request extends \Symfony\Component\HttpFoundation\Request
+class Request extends HttpMessage
 {
-  /**
-   * @var FQDN
-   */
-  protected $_domain;
-  protected $_partCache = [];
-
-  public function getFqdn()
-  {
-    if($this->_domain === null)
-    {
-      $this->_domain = new FQDN($this->getHost());
-    }
-    return $this->_domain;
-  }
+  protected $_method = RequestMethod::GET;
+  protected $_uri = '/';
 
   /**
-   * Define accepted TLDs for use when determining tlds
-   *
-   * @param array $tlds
-   * @param bool  $append
-   *
-   * @return self
+   * @var DataMap
    */
-  public function defineTlds(array $tlds, $append = false)
-  {
-    $this->getFqdn()->defineTlds($tlds, $append);
-    return $this;
-  }
-
+  protected $_files;
   /**
-   * Returns a list of user defined TLDs, used for calculating domain parts
-   *
-   * @return array
+   * @var DataMap
    */
-  public function getDefinedTlds()
+  protected $_query;
+  /**
+   * @var DataMap
+   */
+  protected $_post;
+
+  protected $_body;
+
+  public function __construct(
+    string $method, string $uri, array $query = [], array $post = [], array $cookies = [],
+    array $files = [], array $headers = [], $body = ''
+  )
   {
-    return $this->getFqdn()->getDefinedTlds();
+    $this->_method = $method;
+    $this->_uri = $uri;
+    $this->_headers = new ArrayDataMap($headers);
+    $this->_query = new DataMap($query);
+    $this->_post = new DataMap($post);
+    $this->_files = new DataMap($files);
+    $this->_body = $body;
   }
 
-  public function isSecure($allowUntrustedHeaders = false)
+  public static function createFromGlobals()
   {
-    return $this->_cachedPart(
-      'isSecure-' . ($allowUntrustedHeaders ? 1 : 0),
-      function () use ($allowUntrustedHeaders) {
-        if($allowUntrustedHeaders
-          && in_array(strtolower($this->headers->get('X_FORWARDED_PROTO') ?? ''), ['https', 'on', 'ssl', '1'], true))
-        {
-          return true;
-        }
-        return parent::isSecure();
-      }
+    [$uri,] = explode('?', $_SERVER['REQUEST_URI'], 2);
+    return new static(
+      $_SERVER['REQUEST_METHOD'],
+      $uri,
+      $_GET,
+      $_POST,
+      $_COOKIE,
+      $_FILES,
+      getallheaders()
     );
-  }
-
-  /**
-   * http:// or https://
-   *
-   * @return string
-   */
-  public function protocol()
-  {
-    return $this->_cachedPart('protocol', function () { return $this->isSecure() ? 'https://' : 'http://'; });
-  }
-
-  /**
-   * Sub Domain e.g. www.
-   *
-   * @return string|null
-   */
-  public function subDomain()
-  {
-    return $this->_cachedPart('subdomain', function () { return $this->getFqdn()->subDomain(); });
-  }
-
-  /**
-   * Main domain, excluding sub domains and tlds
-   *
-   * @return string
-   */
-  public function domain()
-  {
-    return $this->_cachedPart('domain', function () { return $this->getFqdn()->domain(); });
-  }
-
-  /**
-   * Top Level Domain
-   *
-   * @return string
-   */
-  public function tld()
-  {
-    return $this->_cachedPart('tld', function () { return $this->getFqdn()->tld(); });
-  }
-
-  /**
-   * Port number the user is requesting on
-   *
-   * @return int
-   */
-  public function port()
-  {
-    return (int)$this->_cachedPart('port', function () { return $this->getPort(); });
-  }
-
-  /**
-   * Clear internal request calculation cache
-   *
-   * @return $this
-   */
-  public function clearInternalCache()
-  {
-    return $this->_clearCachedPart();
-  }
-
-  protected function _clearCachedPart($part = null)
-  {
-    if($part === null)
-    {
-      $this->_partCache = [];
-    }
-    else
-    {
-      unset($this->_partCache[$part]);
-    }
-    return $this;
-  }
-
-  protected function _cachedPart($part, callable $retrieve)
-  {
-    if(!isset($this->_partCache[$part]))
-    {
-      $this->_partCache[$part] = $retrieve();
-    }
-    return $this->_partCache[$part];
-  }
-
-  /**
-   * Returns a formatted string based on the url parts
-   *
-   * - %r = Port Number (no colon)
-   * - %o = Port Number (with colon) - only if non standard
-   * - %i = Path (leading slash)
-   * - %p = Scheme with :// (Usually http:// or https://)
-   * - %h = Host (Subdomain . Domain . Tld : Port [port may not be set])
-   * - %d = Domain
-   * - %s = Sub Domain
-   * - %t = Tld
-   * - %a = Scheme Host (Subdomain . Domain . Tld : Port [port may not be set])
-   *
-   * @param string $format
-   *
-   * @return string mixed
-   */
-  protected $_formatCache;
-
-  public function urlSprintf($format = "%a")
-  {
-    if($this->_formatCache === null)
-    {
-      $this->_formatCache = [
-        "%a" => $this->protocol() . $this->getHttpHost(),
-        "%r" => $this->port(),
-        "%o" => $this->isStandardPort() ? '' : ':' . $this->port(),
-        "%i" => $this->getPathInfo(),
-        "%p" => $this->protocol(),
-        "%h" => $this->getHttpHost(),
-        "%d" => $this->domain(),
-        "%s" => $this->subDomain(),
-        "%t" => $this->tld(),
-      ];
-    }
-
-    return str_replace(array_keys($this->_formatCache), $this->_formatCache, $format);
-  }
-
-  public function url()
-  {
-    return $this->getSchemeAndHttpHost() . $this->getRequestUri();
-  }
-
-  /**
-   * Detect if the port is the standard based on the scheme e.g. http = 80
-   *
-   * @return bool
-   */
-  public function isStandardPort()
-  {
-    $scheme = $this->getScheme();
-    $port = $this->getPort();
-
-    return ('http' == $scheme && $port == 80) || ('https' == $scheme && $port == 443);
-  }
-
-  /**
-   * Match the current request against domain criteria
-   *
-   * @param null $domain
-   * @param null $tld
-   * @param null $subDomain
-   *
-   * @return bool
-   */
-  public function matchDomain($domain = null, $tld = null, $subDomain = null)
-  {
-    $match = true;
-
-    if($domain !== null && strtolower($domain) !== $this->domain())
-    {
-      $match = false;
-    }
-
-    if($tld !== null && strtolower($tld) !== $this->tld())
-    {
-      $match = false;
-    }
-
-    if($subDomain !== null && strtolower($subDomain) !== $this->subDomain())
-    {
-      $match = false;
-    }
-
-    return $match;
-  }
-
-  /**
-   * Pull back a specific number of parts from the URL
-   *
-   * @param null|int $depth depth of /
-   *
-   * @return string
-   */
-  public function path($depth = null)
-  {
-    if($depth !== null)
-    {
-      $depth++;
-      $parts = explode("/", $this->getPathInfo(), $depth + 1);
-      if(count($parts) > $depth)
-      {
-        array_pop($parts);
-        return implode('/', $parts);
-      }
-    }
-    return $this->getPathInfo();
-  }
-
-  /**
-   * Retrieve a section of the path
-   *
-   * @param int  $offset
-   * @param null $limit
-   *
-   * @return string
-   */
-  public function offsetPath($offset = 0, $limit = null)
-  {
-    $parts = explode("/", substr($this->path(), 1));
-    return '/' . implode('/', array_slice($parts, $offset, $limit));
-  }
-
-  /**
-   * Create a request for the console
-   *
-   * @return Request
-   */
-  public static function createConsoleRequest()
-  {
-    return self::create('http://localhost', 'GET', [], [], [], $_SERVER, null);
-  }
-
-  /**
-   * Detect if the user is browsing on the private network
-   *
-   * @param string|null $ip IP to test
-   *
-   * @return bool
-   */
-  public function isPrivateNetwork($ip = null)
-  {
-    if($ip === null)
-    {
-      $ip = $this->getClientIp();
-    }
-    return static::isPrivateIP($ip);
-  }
-
-  public static function isPrivateIP($ip)
-  {
-    return Strings::startsWithAny($ip, ['192.168.', '10.', '172.16.', '127.']);
-  }
-
-  /**
-   * Retrieve the user agent for the request
-   *
-   * @param null $default
-   *
-   * @return mixed
-   */
-  public function userAgent($default = null)
-  {
-    return $this->server->get('HTTP_USER_AGENT', $default);
-  }
-
-  /**
-   * Retrieve the referrer for the request
-   *
-   * @param null $default
-   *
-   * @return mixed
-   */
-  public function referrer($default = null)
-  {
-    return $this->server->get('REFERER', $this->server->get('HTTP_REFERER', $default));
-  }
-
-  /**
-   * Return an array of ips
-   *
-   * @return array
-   */
-  public function getClientIps()
-  {
-    return $this->_cachedPart(
-      'clientIps',
-      function () {
-        $ips = parent::getClientIps();
-        // AppEngine client IP
-        if($this->server->has('HTTP_X_APPENGINE_USER_IP'))
-        {
-          $ips[] = $this->server->get('HTTP_X_APPENGINE_USER_IP');
-        }
-        return $ips;
-      }
-    );
-  }
-
-  /**
-   * Returns the client IP address.
-   *
-   * This method can read the client IP address from the "X-Forwarded-For"
-   * header when trusted proxies were set via "setTrustedProxies()". The
-   * "X-Forwarded-For" header value is a comma+space separated list of IP
-   * addresses, the left-most being the original client, and each successive
-   * proxy that passed the request adding the IP address where it received the
-   * request from.
-   *
-   * If your reverse proxy uses a different header name than "X-Forwarded-For",
-   * ("Client-Ip" for instance), configure it via "setTrustedHeaderName()" with
-   * the "client-ip" key.
-   *
-   * @return string The client IP address
-   *
-   * @see getClientIps()
-   * @see http://en.wikipedia.org/wiki/X-Forwarded-For
-   *
-   * @api
-   */
-  public function getClientIp()
-  {
-    $ipAddresses = $this->getClientIps();
-    return end($ipAddresses);
   }
 }

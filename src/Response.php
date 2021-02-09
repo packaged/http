@@ -1,134 +1,51 @@
 <?php
 namespace Packaged\Http;
 
-use Packaged\Http\Headers\Header;
-use Packaged\Http\Headers\ServerTiming;
+use Packaged\Http\Interfaces\ResponseStatus;
+use Packaged\Map\ArrayDataMap;
 
-class Response extends \Symfony\Component\HttpFoundation\Response
+class Response extends HttpMessage
 {
-  protected $_callTime;
-  protected $_headersSent = false;
-  protected $_sendDebugHeaders;
+  protected $_statusCode;
+  protected $_content;
 
-  /**
-   * @return string
-   */
-  public function getStatusText()
+  public function __construct($content = '', $statusCode = ResponseStatus::OK)
   {
-    return $this->statusText;
+    $this->_statusCode = $statusCode;
+    $this->_content = $content;
+    $this->_headers = new ArrayDataMap();
   }
 
-  /**
-   * @return $this
-   */
-  public function disableDebugHeaders()
+  public function __toString()
   {
-    $this->_sendDebugHeaders = false;
-    return $this;
+    return
+      //StartLine
+      $this->_startLine()
+      . "\r\n"
+      //Headers
+      . $this->_headersString()
+      . "\r\n"
+      //Content
+      . $this->getContent();
   }
 
-  /**
-   * @return $this
-   */
-  public function enableDebugHeaders()
-  {
-    $this->_sendDebugHeaders = true;
-    return $this;
-  }
-
-  /**
-   * Set the microtime(true) value when the call started
-   *
-   * @param $time
-   *
-   * @return $this
-   */
-  public function setCallStartTime($time)
-  {
-    $this->_callTime = $time;
-    return $this;
-  }
-
-  protected $_originalSource;
-
-  /**
-   * Add Debug Headers before sending
-   *
-   * @inheritdoc
-   *
-   * @return Response
-   */
   public function sendHeaders()
   {
-    if(!$this->_headersSent)
+    header(
+      sprintf('HTTP/%s %s %s', $this->_httpVersion, $this->_statusCode, ResponseStatus::PHRASES[$this->_statusCode])
+    );
+    foreach($this->headers()->all() as $name => $values)
     {
-      $this->_headersSent = true;
-      $this->setDebugHeaders();
-      return parent::sendHeaders();
-    }
-    return $this;
-  }
-
-  /**
-   * Define Debug Headers
-   *
-   * Automatically called by ->send()
-   */
-  public function setDebugHeaders()
-  {
-    if($this->_sendDebugHeaders === true)
-    {
-      $timing = new ServerTiming();
-
-      //Add the exec time as a header if PHP_START has been defined by the project
-      if(defined('PHP_START'))
+      $name = ucwords($name, '-');
+      foreach((array)$values as $value)
       {
-        $timing->add('execution', (microtime(true) - PHP_START) * 1000, "Execution Time");
-        $this->headers->set(
-          "x-execution-time",
-          number_format((microtime(true) - PHP_START) * 1000, 3) . ' ms'
-        );
-      }
-
-      if($this->_callTime > 0)
-      {
-        $this->headers->set(
-          'x-call-time',
-          number_format((microtime(true) - $this->_callTime) * 1000, 3) . ' ms'
-        );
-        $timing->add('calltime', (microtime(true) - $this->_callTime) * 1000, "Call Time");
-      }
-
-      if($timing->hasTimings())
-      {
-        $this->addHeader($timing);
+        header(sprintf("%s %s\r\n", $name . ':', $value));
       }
     }
   }
 
-  /**
-   * Set a header, defaulting to replace the existing
-   *
-   * @param Header $header
-   * @param bool   $replace
-   *
-   * @return $this
-   */
-  public function setHeader(Header $header, bool $replace = true)
+  public function getContent()
   {
-    $this->headers->set($header->getKey(), $header->getValue(), $replace);
-    return $this;
-  }
-
-  /**
-   * Add a header, without replacing existing
-   *
-   * @param Header $header
-   *
-   * @return $this
-   */
-  public function addHeader(Header $header)
-  {
-    return $this->setHeader($header, false);
+    return $this->_content;
   }
 }
