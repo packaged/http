@@ -3,7 +3,7 @@ namespace Packaged\Http\LinkBuilder;
 
 use Packaged\Helpers\Path;
 use Packaged\Http\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Packaged\Http\Responses\RedirectResponse;
 
 class LinkBuilder
 {

@@ -4,7 +4,6 @@ namespace Packaged\Http\Cookies;
 
 use Packaged\Config\ConfigurableInterface;
 use Packaged\Config\ConfigurableTrait;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

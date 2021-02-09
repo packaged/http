@@ -4,8 +4,8 @@ namespace Packaged\Tests\Http;
 
 use Packaged\Http\LinkBuilder\LinkBuilder;
 use Packaged\Http\Request;
+use Packaged\Http\Responses\RedirectResponse;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class LinkBuilderTest extends TestCase
 {
