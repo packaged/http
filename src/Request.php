@@ -12,7 +12,7 @@ class Request extends HttpMessage
   protected $_method = RequestMethod::GET;
   protected $_uri = '/';
 
-  /** @var array|DataMap|null */
+  /** @var array|RequestFiles|null */
   protected $_files;
   /** @var array|DataMap|null */
   protected $_query;
