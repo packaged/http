@@ -10,12 +10,12 @@ class HttpMessage
 
   protected $_httpVersion = self::VERSION_1_1;
 
-  /** @var ArrayDataMap|null */
+  /** @var array|ArrayDataMap|null */
   protected $_headers;
 
   protected $_body;
 
-  public function headers()
+  public function headers(): ArrayDataMap
   {
     return $this->_headers;
   }

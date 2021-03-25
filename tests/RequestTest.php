@@ -1,18 +1,17 @@
 <?php
 namespace Packaged\Tests\Http;
 
+use Packaged\Http\Interfaces\RequestMethod;
 use Packaged\Http\Request;
 use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase
 {
-  public function testExtendsSymfonyRequest()
+  public function testGetHost()
   {
-    $request = new Request();
-    $this->assertInstanceOf(
-      '\Symfony\Component\HttpFoundation\Request',
-      $request
-    );
+    $r = new Request(RequestMethod::GET, '/', [], [], [], [], ['HOST' => 'localhost:9999']);
+    self::assertEquals('localhost', $r->getHost());
+    self::assertEquals('9999', $r->getPort());
   }
 
   public function testPort()
