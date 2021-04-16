@@ -9,18 +9,24 @@ class Response extends HttpMessage
   protected $_statusCode;
   protected $_content;
 
-  public function __construct($content = '', $statusCode = ResponseStatus::OK)
+  public function __construct($content = '', $statusCode = ResponseStatus::OK, $headers = [])
   {
     $this->_statusCode = $statusCode;
     $this->_content = $content;
-    $this->_headers = new ArrayDataMap();
+    $this->_headers = new ArrayDataMap($headers);
+  }
+
+  public static function create($content = '', $status = ResponseStatus::OK, $headers = [])
+  {
+    return new static($content, $status, $headers);
   }
 
   public function __toString()
   {
     return
       //StartLine
-      $this->_startLine()
+      //$this->_startLine()
+      ''
       . "\r\n"
       //Headers
       . $this->_headersString()
