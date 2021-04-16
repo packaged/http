@@ -191,6 +191,11 @@ class Request extends HttpMessage
     return $this->_files;
   }
 
+  public function getMethod()
+  {
+    return $this->_method;
+  }
+
   public function isXmlHttpRequest(): bool
   {
     return 'XMLHttpRequest' == $this->headers()->get('X-Requested-With');
