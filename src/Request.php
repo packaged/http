@@ -116,6 +116,20 @@ class Request extends HttpMessage
     return $this->_fqdn;
   }
 
+  /**
+   * Define accepted TLDs for use when determining tlds
+   *
+   * @param array $tlds
+   * @param bool  $append
+   *
+   * @return self
+   */
+  public function defineTlds(array $tlds, $append = false)
+  {
+    $this->getFqdn()->defineTlds($tlds, $append);
+    return $this;
+  }
+
   protected $_host;
   protected $_port;
 
