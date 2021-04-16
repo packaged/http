@@ -1,6 +1,8 @@
 <?php
 namespace Packaged\Http;
 
+use function getallheaders;
+
 class GlobalsRequest extends Request
 {
   public static function create()
