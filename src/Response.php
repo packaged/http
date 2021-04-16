@@ -54,4 +54,15 @@ class Response extends HttpMessage
   {
     return $this->_content;
   }
+
+  /**
+   * Is the response a redirect of some form?
+   *
+   * @final
+   */
+  public function isRedirect(string $location = null): bool
+  {
+    return \in_array($this->_statusCode, [201, 301, 302, 303, 307, 308])
+      && null === $location || $location == $this->headers()->get('Location');
+  }
 }
