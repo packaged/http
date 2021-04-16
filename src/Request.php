@@ -22,7 +22,7 @@ class Request extends HttpMessage
   protected $_body;
 
   protected function __construct(
-    string $method = RequestMethod::GET, string $uri = '/', array $query = [], array $post = [], array $cookies = [],
+    string $uri = '/', string $method = RequestMethod::GET, array $query = [], array $post = [], array $cookies = [],
     array $files = [], array $headers = [], $body = ''
   )
   {

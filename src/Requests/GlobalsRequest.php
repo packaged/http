@@ -30,8 +30,8 @@ class GlobalsRequest extends Request
 
     [$uri,] = explode('?', $_SERVER['REQUEST_URI'] ?? '/', 2);
     return new static(
-      $_SERVER['REQUEST_METHOD'] ?? 'GET',
       $uri,
+      $_SERVER['REQUEST_METHOD'] ?? 'GET',
       $_GET,
       $_POST,
       $_COOKIE,

@@ -7,10 +7,10 @@ use Packaged\Http\Request;
 class HttpRequest extends Request
 {
   public static function create(
-    string $method = RequestMethod::GET, string $uri = '/', array $query = [], array $post = [], array $cookies = [],
+    string $uri = '/', string $method = RequestMethod::GET, array $query = [], array $post = [], array $cookies = [],
     array $files = [], array $headers = [], $body = ''
   )
   {
-    return new static($method, $uri, $query, $post, $cookies, $files, $headers, $body);
+    return new static($uri, $method, $query, $post, $cookies, $files, $headers, $body);
   }
 }
