@@ -35,6 +35,25 @@ class Request extends HttpMessage
     $this->_body = $body;
   }
 
+  public function __get($name)
+  {
+    switch($name)
+    {
+      case 'request':
+        error_log("Please use $\request->post() instead of \$request->request");
+        return $this->post();
+      case 'query':
+        error_log("Please use $\request->query() instead of \$request->query");
+        return $this->query();
+      case 'files':
+        error_log("Please use $\request->files() instead of \$request->files");
+        return $this->files();
+      /*case 'cookies':
+        return $this->cookies();*/
+    }
+    return null;
+  }
+
   protected $_trustedProxies = [];
 
   public function addTrustedProxy($ip)
