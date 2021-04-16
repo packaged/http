@@ -190,4 +190,9 @@ class Request extends HttpMessage
   {
     return $this->_files;
   }
+
+  public function isXmlHttpRequest(): bool
+  {
+    return 'XMLHttpRequest' == $this->headers()->get('X-Requested-With');
+  }
 }
