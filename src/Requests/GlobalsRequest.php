@@ -1,6 +1,7 @@
 <?php
-namespace Packaged\Http;
+namespace Packaged\Http\Requests;
 
+use Packaged\Http\Request;
 use function getallheaders;
 
 class GlobalsRequest extends Request
