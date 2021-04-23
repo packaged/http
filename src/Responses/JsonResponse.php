@@ -7,17 +7,17 @@ class JsonResponse extends Response
 {
   public static function create($object = null, $status = 200, $headers = [])
   {
-    return static::raw(json_encode($object), $status, $headers);
+    return static::raw(json_encode($object, JSON_INVALID_UTF8_SUBSTITUTE), $status, $headers);
   }
 
   public static function prefixed($object = null, $status = 200, $headers = [], $prefix = ')]}\'')
   {
-    return static::raw($prefix . json_encode($object), $status, $headers);
+    return static::raw($prefix . json_encode($object, JSON_INVALID_UTF8_SUBSTITUTE), $status, $headers);
   }
 
   public static function p($responseKey, $object, $status = 200, $headers = [])
   {
-    $responseObject = json_encode($object);
+    $responseObject = json_encode($object, JSON_INVALID_UTF8_SUBSTITUTE);
     return static::raw("{$responseKey}({$responseObject})", $status, $headers);
   }
 
