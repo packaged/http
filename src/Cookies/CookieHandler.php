@@ -7,12 +7,12 @@ interface CookieHandler
   /**
    * Check to see if the handler can handle a cookie
    *
-   * @param string      $name
-   * @param string|null $value
+   * @param string            $name
+   * @param string|array|null $value
    *
    * @return bool
    */
-  public function canHandle(string $name, string $value = null): bool;
+  public function canHandle(string $name, $value = null): bool;
 
   /**
    * Decode a cookie name from transport

@@ -4,7 +4,13 @@ namespace Packaged\Http\Cookies;
 
 class DefaultHandler extends AbstractCookieHandler
 {
-  public function canHandle(string $name, string $value = null): bool
+  /**
+   * @param string            $name
+   * @param string|array|null $value
+   *
+   * @return bool
+   */
+  public function canHandle(string $name, $value = null): bool
   {
     return true;
   }
