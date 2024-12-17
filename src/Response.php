@@ -10,6 +10,11 @@ class Response extends \Symfony\Component\HttpFoundation\Response
   protected $_headersSent = false;
   protected $_sendDebugHeaders;
 
+  public static function create(?string $content = '', int $status = 200, array $headers = []): static
+  {
+    return new static($content, $status, $headers);
+  }
+
   /**
    * @return string
    */
@@ -55,10 +60,9 @@ class Response extends \Symfony\Component\HttpFoundation\Response
    * Add Debug Headers before sending
    *
    * @inheritdoc
-   *
    * @return \Symfony\Component\HttpFoundation\Response
    */
-  public function sendHeaders()
+  public function sendHeaders(?int $statusCode = null): static
   {
     if(!$this->_headersSent)
     {
@@ -71,7 +75,6 @@ class Response extends \Symfony\Component\HttpFoundation\Response
 
   /**
    * Define Debug Headers
-   *
    * Automatically called by ->send()
    */
   public function setDebugHeaders()
