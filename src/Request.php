@@ -46,7 +46,7 @@ class Request extends \Symfony\Component\HttpFoundation\Request
     return $this->getFqdn()->getDefinedTlds();
   }
 
-  public function isSecure($allowUntrustedHeaders = false)
+  public function isSecure($allowUntrustedHeaders = false): bool
   {
     return $this->_cachedPart(
       'isSecure-' . ($allowUntrustedHeaders ? 1 : 0),
@@ -197,7 +197,7 @@ class Request extends \Symfony\Component\HttpFoundation\Request
     $scheme = $this->getScheme();
     $port = $this->getPort();
 
-    return ('http' == $scheme && $port == 80) || ('https' == $scheme && $port == 443);
+    return ('http' === $scheme && $port === 80) || ('https' === $scheme && $port === 443);
   }
 
   /**
@@ -327,7 +327,7 @@ class Request extends \Symfony\Component\HttpFoundation\Request
    *
    * @return array
    */
-  public function getClientIps()
+  public function getClientIps(): array
   {
     return $this->_cachedPart(
       'clientIps',
@@ -364,7 +364,7 @@ class Request extends \Symfony\Component\HttpFoundation\Request
    *
    * @api
    */
-  public function getClientIp()
+  public function getClientIp(): string
   {
     $ipAddresses = $this->getClientIps();
     return end($ipAddresses);

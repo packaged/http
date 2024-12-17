@@ -5,7 +5,7 @@ use Packaged\Http\Response;
 
 class JsonResponse extends Response
 {
-  public static function create($object = null, $status = 200, $headers = [])
+  public static function create($object = null, $status = 200, $headers = []): static
   {
     return static::raw(json_encode($object, JSON_INVALID_UTF8_SUBSTITUTE), $status, $headers);
   }

@@ -56,7 +56,7 @@ class LinkBuilder
 
   protected function _isStandardPort($scheme, $port)
   {
-    return ('http' == $scheme && $port == 80) || ('https' == $scheme && $port == 443);
+    return ('http' === $scheme && $port === 80) || ('https' === $scheme && $port === 443);
   }
 
   /**
