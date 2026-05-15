@@ -54,9 +54,9 @@ class LinkBuilder
       . ($this->_fragment ? '#' . $this->_fragment : null);
   }
 
-  protected function _isStandardPort($scheme, $port)
+  protected function _isStandardPort($scheme, $port): bool
   {
-    return ('http' === $scheme && $port === 80) || ('https' === $scheme && $port === 443);
+    return ('http' === $scheme && (int)$port === 80) || ('https' === $scheme && (int)$port === 443);
   }
 
   /**
