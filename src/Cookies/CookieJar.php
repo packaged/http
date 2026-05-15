@@ -111,7 +111,7 @@ class CookieJar implements ConfigurableInterface
     return isset($this->_requestCookies[$name]) || ($checkQueued && isset($this->_responseCookies[$name]));
   }
 
-  public function store(string $name, string $value = null, $expireSeconds = 0)
+  public function store(string $name, ?string $value = null, $expireSeconds = 0)
   {
     unset($this->_deleteCookies[$name]);
     $this->_responseCookies[$name] = ['v' => $value, 'e' => $expireSeconds > 0 ? (time() + $expireSeconds) : 0];
