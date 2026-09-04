@@ -82,6 +82,22 @@ class RequestTest extends TestCase
     $this->assertTrue($request->isStandardPort());
   }
 
+  /**
+   * With no HOST header, getPort() returns SERVER_PORT verbatim, which the
+   * SAPI provides as a string
+   */
+  public function testStandardPortFromServerPortString()
+  {
+    $request = Request::createFromGlobals();
+    $request->headers->remove('HOST');
+
+    $request->server->set('SERVER_PORT', '80');
+    $this->assertTrue($request->isStandardPort());
+
+    $request->server->set('SERVER_PORT', '81');
+    $this->assertFalse($request->isStandardPort());
+  }
+
   public function testMatchDomain()
   {
     $request = Request::createFromGlobals();

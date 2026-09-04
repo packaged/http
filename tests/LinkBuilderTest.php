@@ -20,6 +20,8 @@ class LinkBuilderTest extends TestCase
     self::assertEquals('http://www.packaged.local:81', LinkBuilder::fromRequest($request)->asUrl());
     self::assertEquals('http://www.packaged.local:81/ab', LinkBuilder::fromRequest($request, '/ab')->asUrl());
     self::assertEquals('http://www.packaged.local', LinkBuilder::fromRequest($request)->setPort(80)->asUrl());
+    self::assertEquals('http://www.packaged.local', LinkBuilder::fromRequest($request)->setPort('80')->asUrl());
+    self::assertEquals('http://www.packaged.local:81', LinkBuilder::fromRequest($request)->setPort('81')->asUrl());
 
     $lb = LinkBuilder::fromRequest($request);
     self::assertEquals('http://www.packaged.local:81', $lb->asUrl());

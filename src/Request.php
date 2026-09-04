@@ -195,7 +195,7 @@ class Request extends \Symfony\Component\HttpFoundation\Request
   public function isStandardPort()
   {
     $scheme = $this->getScheme();
-    $port = $this->getPort();
+    $port = (int)$this->getPort();
 
     return ('http' === $scheme && $port === 80) || ('https' === $scheme && $port === 443);
   }
