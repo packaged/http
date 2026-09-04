@@ -83,4 +83,21 @@ class LinkBuilderTest extends TestCase
     $lb->setFragment('def');
     self::assertEquals('https://secure.packaged.local#def', $lb->asUrl());
   }
+
+  /**
+   * Behind a TLS terminating proxy the scheme comes from X-Forwarded-Proto, so
+   * 443 is the standard port and should not be written into the url
+   */
+  public function testAsUrlBehindTlsTerminatingProxy()
+  {
+    $request = Request::create('http://www.packaged.local:443/');
+    $request->headers->set('X_FORWARDED_PROTO', 'https');
+
+    self::assertFalse($request->isSecure());
+    self::assertTrue($request->isSecure(true));
+    self::assertEquals('http', $request->getScheme());
+    self::assertEquals(443, $request->port());
+
+    self::assertEquals('https://www.packaged.local', LinkBuilder::fromRequest($request)->asUrl());
+  }
 }
