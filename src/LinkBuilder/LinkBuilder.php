@@ -38,6 +38,13 @@ class LinkBuilder
   {
     $scheme = $this->_scheme ?? ($this->_request->isSecure(true) ? 'https' : 'http');
     $port = $this->_port ?? $this->_request->port();
+
+    // When the scheme comes from a proxy that terminated tls, the port the
+    // request arrived on is the proxy's, not the one the url is reachable on
+    $schemeIsForwarded = $this->_scheme === null
+      && $this->_port === null
+      && $this->_request->isSecure(true)
+      && !$this->_request->isSecure();
     return
       ($scheme . '://') . implode(
         '.',
@@ -47,7 +54,7 @@ class LinkBuilder
           ($this->_tld ?? $this->_request->tld()),
         ]
       )
-      . ($this->_isStandardPort($this->_scheme ?? $this->_request->getScheme(), $port) ? '' : ':' . $port)
+      . ($schemeIsForwarded || $this->_isStandardPort($scheme, $port) ? '' : ':' . $port)
       . (isset($this->_path[0]) && $this->_path[0] !== '/' ? '/' : '')
       . $this->_path
       . (!empty($this->_query) ? '?' . http_build_query($this->_query) : null)
