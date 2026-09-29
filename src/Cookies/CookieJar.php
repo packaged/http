@@ -86,7 +86,13 @@ class CookieJar implements ConfigurableInterface
     foreach($request->cookies->all() as $name => $cookie)
     {
       $handler = $this->_getHandler($name, $cookie);
-      $this->_requestCookies[$handler->decodeName($name)] = $handler->decodeValue($cookie);
+      try
+      {
+        $this->_requestCookies[$handler->decodeName($name)] = $handler->decodeValue($cookie);
+      }
+      catch(InvalidCookieException $e)
+      {
+      }
     }
   }
 
